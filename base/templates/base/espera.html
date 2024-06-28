@@ -1,0 +1,114 @@
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="text-center mt-5">
+                <h1>Olá <span id="nome_usuario"></span>, você está na fila de atendimento.</h1>
+                <p>Assim que possível, alguém irá te aceitar.</p>
+                <p>Tempo na fila: <span id="tempo_espera">0 minutos</span>.</p>
+                <!-- Botão para desistir do atendimento -->
+                <button id="desistirBtn" class="btn btn-danger">Desistir do Atendimento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação -->
+<div class="modal" tabindex="-1" role="dialog" id="confirmacaoModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmação</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Tem certeza de que deseja desistir do atendimento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="confirmarDesistenciaBtn" type="button" class="btn btn-danger">Sim, Desistir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    // Evento de clique no botão "Desistir do Atendimento"
+    document.getElementById('desistirBtn').addEventListener('click', function() {
+        // Mostrar o modal de confirmação
+        $('#confirmacaoModal').modal('show');
+    });
+
+    // Evento de clique no botão de confirmação no modal
+    document.getElementById('confirmarDesistenciaBtn').addEventListener('click', function() {
+        // Redirecionar para a página de fome
+        window.location.href = '{% url "lobby" %}';
+    });
+
+
+   // Função para atualizar o contador de tempo de espera
+    function atualizarTempoEspera() {
+        // Obter o elemento de tempo de espera
+        var tempoEsperaElemento = document.getElementById("tempo_espera");
+        
+        // Obter o tempo de espera em minutos
+        var tempoEsperaMinutos = parseInt(tempoEsperaElemento.textContent);
+
+        // Incrementar o tempo de espera em 1 minuto
+        tempoEsperaMinutos++;
+
+        // Atualizar o tempo de espera no elemento
+        tempoEsperaElemento.textContent = tempoEsperaMinutos + " minutos";
+    }
+
+    function atualizarNomeUsuario() {
+    // Obter o elemento de nome do usuário
+    var nomeUsuarioElemento = document.getElementById("nome_usuario");
+
+    // Obter o nome do usuário do elemento
+    var nomeUsuario = nomeUsuarioElemento.textContent.trim();
+
+    // Atualizar o nome do usuário no elemento
+    nomeUsuarioElemento.textContent = nomeUsuario;
+    }
+
+    // Atualizar o nome do usuário ao carregar a página
+    window.onload = atualizarNomeUsuario;
+
+    // Atualizar o tempo de espera a cada minuto (60.000 milissegundos)
+    setInterval(atualizarTempoEspera, 60000);
+</script>
+{% endblock %}
+
+
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 100px auto;
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    color: #666;
+}
+
+</style>

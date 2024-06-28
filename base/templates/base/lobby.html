@@ -6,60 +6,173 @@
 
     <section id="form-container">
 
-        <img id="logo" src="{% static 'images/chat-icon.png' %}"/>
+        <img id="logo" src="{% static 'images/KN.png' %}"/>
 
         <div id="welcome-message">
-            <h1>Welcome to MyChat</h1>
-            <p>A group video calling platform made just for you!</p>
+            <h1>Bem vindo a central RH</h1>
+            <p>Faça uma chamada com algum dos nossos atendentes</p>
         </div>
 
-        <form id="form">
-            <div class="field-wrapper">
+        <form id="form" action="{% url 'salvar_no_json' %}">
+            
+            <div class="container mt-5">
+                <form>
+                  <div class="form-group">
+                    <label for="sala">Sala:</label>
+                    <input type="text" class="form-control" id="sala" name="sala" placeholder="" style="text-transform:uppercase">
+                  </div>
+                  <div class="form-group">
+                    <label for="nome">Seu nome:</label>
+                    <input type="text" class="form-control" id="nome" name="nome" placeholder="" style="text-transform:uppercase">
+                  </div>
+                  <div class="form-group">
+                    <label for="matricula">Sua matrícula:</label>
+                    <input type="text" class="form-control" id="matricula" name="matricula" placeholder="" style="text-transform:uppercase">
+                  </div>
+                  <div class="form-group">
+                    <label for="empresa">Operação:</label>
+                    <select class="form-control" id="empresa" name="empresa">
+                      <option value="">Selecione a operação</option>
+                      <option value="Shein">Shein</option>
+                      <option value="Meli">Mercado Livre</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select class="form-control" id="estado" name="estado">
+                      <option value="">Selecione o estado</option>
+                      <option value="AC">Acre</option>
+                      <option value="AL">Alagoas</option>
+                      <option value="AP">Amapá</option>
+                      <option value="AM">Amazonas</option>
+                      <option value="BA">Bahia</option>
+                      <option value="CE">Ceará</option>
+                      <option value="DF">Distrito Federal</option>
+                      <option value="ES">Espírito Santo</option>
+                      <option value="GO">Goiás</option>
+                      <option value="MA">Maranhão</option>
+                      <option value="MT">Mato Grosso</option>
+                      <option value="MS">Mato Grosso do Sul</option>
+                      <option value="MG">Minas Gerais</option>
+                      <option value="PA">Pará</option>
+                      <option value="PB">Paraíba</option>
+                      <option value="PR">Paraná</option>
+                      <option value="PE">Pernambuco</option>
+                      <option value="PI">Piauí</option>
+                      <option value="RJ">Rio de Janeiro</option>
+                      <option value="RN">Rio Grande do Norte</option>
+                      <option value="RS">Rio Grande do Sul</option>
+                      <option value="RO">Rondônia</option>
+                      <option value="RR">Roraima</option>
+                      <option value="SC">Santa Catarina</option>
+                      <option value="SP">São Paulo</option>
+                      <option value="SE">Sergipe</option>
+                      <option value="TO">Tocantins</option>
+                      <!-- Opções para os outros estados... -->
+                    </select>
+                  </div>
+                  <div id="the-basics">
+                    <label for="cidade">Cidade:</label>
+                    <input class="form-control" type="text" placeholder="States of USA" id="cidade">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Entre</button>
+                </form>
+              </div>
 
-                <div class="form-field">
-                    <label>Room:</label>
-                    <input name="room" placeholder="Enter a room name..."  style="text-transform:uppercase"/>
-                </div>
-
-                <div class="form-field">
-                    <label>Name:</label>
-                    <input name="name" placeholder="Enter your name..."  style="text-transform:uppercase"/>
-                </div>
-
-                <div class="form-field">
-                    <input type="submit" value="Join Stream" />
-                </div>
-            </div>
         </form>
     </section>
 </main>
 
 <script>
+
+
     let form = document.getElementById('form')
 
     let handleSubmit = async (e) => {
         e.preventDefault()
-        let room = e.target.room.value.toUpperCase()
-        let name = e.target.name.value
+        let room = e.target.sala.value.toUpperCase()
+        let name = e.target.nome.value
+        let matricula = e.target.matricula.value
+        let estado = e.target.estado.value
+        let cidade = e.target.cidade.value
+        let currentDate = new Date();
 
-        let response = await fetch(`/get_token/?channel=${room}`)
-        let data = await response.json()
+        // Converter a data para uma string no formato ISO (YYYY-MM-DDTHH:MM:SSZ)
+        let dateString = currentDate.toISOString();
 
-        let UID = data.uid
-        let token = data.token
+        //let response = await fetch(`/get_token/?channel=${room}`)
+        //let data = await response.json()
 
-        sessionStorage.setItem('UID', UID)
-        sessionStorage.setItem('token', token)
-        sessionStorage.setItem('room', room)
-        sessionStorage.setItem('name', name)
+        let UID = "1244" //data.uid
+        let token = "asdasdas" //data.token
 
-        window.open('/room/', '_self')
+        // Cria um objeto JSON com as variáveis
+        let dadosRequisicao = {
+            "dataSessao": dateString,
+            "room": room,
+            "name": name,
+            "matricula": matricula,
+            "estado": estado,
+            "cidade": cidade,
+            "UID": UID,
+            "token": token
+        };
+        
+        //console.log(dadosJSON)
+        // Serializa o objeto para JSON
+        let dadosJSON = JSON.stringify(dadosRequisicao);
+     
+        let response2 = await fetch('{% url "salvar_no_json" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: dadosJSON
+        });
+
+        if (response2.ok) {
+            let data = await response2.json();
+            window.location.href = '{% url "espera" %}';
+            
+            
+            // Faça algo com a resposta, se necessário
+        } else {
+            console.error('Erro ao enviar dados:', response2.status);
+            // Lide com o erro, se necessário
+        }
+
+
+
+        //sessionStorage.setItem('UID', UID)
+        //sessionStorage.setItem('token', token)
+        //sessionStorage.setItem('room', room)
+        //sessionStorage.setItem('name', name)
+
+        //window.open('/room/', '_self')
     }
 
-
-
     form.addEventListener('submit', handleSubmit)
+
+
 </script>
+
+<style>
+#logo {
+    width: 300px; /* Ajuste o tamanho conforme necessário */
+    height: auto; /* Mantém a proporção original */
+    display: block; /* Para centralizar a imagem horizontalmente */
+    margin: 0 auto; /* Centraliza horizontalmente */
+    margin-bottom: 20px; /* Espaçamento inferior para separar do restante do formulário */
+}
+
+.btn-primary {
+    margin-top: 20px; /* Aumenta a margem superior do botão */
+    width: 100%; /* Define a largura do botão igual à largura do formulário */
+    border-radius: 0; /* Remove o arredondamento das bordas do botão */
+}
+
+</style>
 
 {% endblock content %}
 

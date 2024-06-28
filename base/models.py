@@ -10,3 +10,11 @@ class RoomMember(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Requisicao(models.Model):
+    room = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    matricula = models.CharField(max_length=100)
+    estado = models.CharField(max_length=100)
+    cidade = models.CharField(max_length=100)
+    data = models.DateTimeField(auto_now_add=True)

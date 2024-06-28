@@ -1,0 +1,52 @@
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h1 class="mt-5 mb-4">Lista de Pessoas em Espera</h1>
+    {% if pessoas_em_espera %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Estado</th>
+                        <th>Cidade</th>
+                        <th>Tempo de Espera</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pessoa in pessoas_em_espera %}
+                        <tr>
+                            <td>{{ pessoa.nome }}</td>
+                            <td>{{ pessoa.cidade }}</td>
+                            <td>{{ pessoa.estado }}</td>
+                            <td>{{ pessoa.data_sessao }}</td>
+                            <td>
+                                <button class="btn btn-success" onclick="atender('{{ pessoa.name }}')">Atender</button>
+                                <button class="btn btn-danger" onclick="remover('{{ pessoa.name }}')">Remover</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Não há pessoas em espera no momento.</p>
+    {% endif %}
+</div>
+
+<script>
+    function atender(nome) {
+        // Adicione aqui a lógica para atender a pessoa
+        alert("Atendendo " + nome);
+    }
+
+    function remover(nome) {
+        // Adicione aqui a lógica para remover a pessoa da lista de espera
+        alert("Removendo " + nome);
+    }
+</script>
+
+{% endblock %}
